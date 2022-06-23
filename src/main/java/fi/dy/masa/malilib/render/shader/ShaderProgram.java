@@ -1,13 +1,17 @@
 package fi.dy.masa.malilib.render.shader;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import fi.dy.masa.malilib.MaLiLib;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.resource.Resource;
+import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Identifier;
-import fi.dy.masa.malilib.MaLiLib;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 /**
  * This class has been directly taken from Schematica by Lunatrius & contributors
@@ -110,21 +114,13 @@ public class ShaderProgram
     {
         try
         {
-            final StringBuilder code = new StringBuilder();
-            final InputStream inputStream = this.mc.getResourceManager().getResource(resourceLocation).getInputStream();
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-            String line;
-
-            while ((line = reader.readLine()) != null)
-            {
-                code.append(line);
-                code.append('\n');
-            }
-
-            reader.close();
-
-            return code.toString();
+            return this.mc.getResourceManager().getResource(resourceLocation)
+                    .map(this::getInputStreamFromResource)
+                    .map(InputStreamReader::new)
+                    .map(BufferedReader::new)
+                    .stream()
+                    .flatMap(BufferedReader::lines)
+                    .collect(Collectors.joining("\n", "", "\n"));
         }
         catch (final Exception e)
         {
@@ -137,5 +133,13 @@ public class ShaderProgram
     public int getProgram()
     {
         return this.program;
+    }
+
+    private InputStream getInputStreamFromResource(Resource resource) {
+        try {
+            return resource.getInputStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

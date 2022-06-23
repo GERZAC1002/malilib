@@ -1,11 +1,7 @@
 package fi.dy.masa.malilib.event;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.client.MinecraftClient;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.Message;
@@ -19,6 +15,14 @@ import fi.dy.masa.malilib.hotkeys.IMouseInputHandler;
 import fi.dy.masa.malilib.hotkeys.KeybindCategory;
 import fi.dy.masa.malilib.hotkeys.KeybindMulti;
 import fi.dy.masa.malilib.util.InfoUtils;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.SimpleOption;
+import org.apache.commons.lang3.BooleanUtils;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 public class InputEventHandler implements IKeybindManager, IInputManager
 {
@@ -202,8 +206,10 @@ public class InputEventHandler implements IKeybindManager, IInputManager
      */
     public boolean onMouseScroll(final int mouseX, final int mouseY, final double xOffset, final double yOffset)
     {
-        boolean discrete = this.mc.options.discreteMouseScroll;
-        double sensitivity = this.mc.options.mouseWheelSensitivity;
+        boolean discrete = BooleanUtils.toBoolean(this.mc.options.getDiscreteMouseScroll().getValue());
+        double sensitivity = Optional.ofNullable(this.mc.options.getMouseWheelSensitivity())
+                .map(SimpleOption::getValue)
+                .orElse(0.0);
         double amount = (discrete ? Math.signum(yOffset) : yOffset) * sensitivity;
 
         if (MaLiLibConfigs.Debug.MOUSE_SCROLL_DEBUG.getBooleanValue())

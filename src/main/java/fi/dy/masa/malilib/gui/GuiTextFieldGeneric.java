@@ -4,7 +4,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.LiteralTextContent;
+import net.minecraft.text.MutableText;
 
 public class GuiTextFieldGeneric extends TextFieldWidget
 {
@@ -15,7 +16,7 @@ public class GuiTextFieldGeneric extends TextFieldWidget
 
     public GuiTextFieldGeneric(int x, int y, int width, int height, TextRenderer textRenderer)
     {
-        super(textRenderer, x, y, width, height, new LiteralText(""));
+        super(textRenderer, x, y, width, height, MutableText.of(new LiteralTextContent("")));
 
         this.x = x;
         this.y = y;

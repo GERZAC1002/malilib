@@ -1,13 +1,15 @@
 package fi.dy.masa.malilib.util;
 
+import fi.dy.masa.malilib.MaLiLibConfigs;
+import net.minecraft.text.MutableText;
+
+import javax.annotation.Nullable;
 import java.io.File;
 import java.net.SocketAddress;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.Nullable;
-import fi.dy.masa.malilib.MaLiLibConfigs;
 
 public class StringUtils
 {
@@ -73,13 +75,13 @@ public class StringUtils
 
     public static void sendOpenFileChatMessage(net.minecraft.entity.Entity sender, String messageKey, File file)
     {
-        net.minecraft.text.Text name = (new net.minecraft.text.LiteralText(file.getName()))
+        net.minecraft.text.Text name = MutableText.of(new net.minecraft.text.LiteralTextContent(file.getName()))
             .formatted(net.minecraft.util.Formatting.UNDERLINE)
             .styled((style) -> {
                 return style.withClickEvent(new net.minecraft.text.ClickEvent(net.minecraft.text.ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()));
             });
 
-        sender.sendSystemMessage(new net.minecraft.text.TranslatableText(messageKey, name), sender.getUuid());
+        sender.sendMessage(MutableText.of(new net.minecraft.text.TranslatableTextContent(messageKey, name)));
     }
 
     /**
